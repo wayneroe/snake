@@ -125,7 +125,8 @@ class SplashScreen(GameState):
         self.persist["screen_color"] = "black"
         self.next_state = "GAMEPLAY"
 
-        self.start_button = PushButton("Start Game", self.screen_rect)
+        self.start_button = PushButton("Start Game", self.screen_rect.centerx, 30)
+        self.multiplayer_button = PushButton("Multiplayer", self.screen_rect.centerx, 120)
 
     def get_event(self, event):
         if event.type == pg.QUIT:
@@ -136,10 +137,13 @@ class SplashScreen(GameState):
         elif event.type == pg.MOUSEBUTTONUP:
             self.persist["screen_color"] = "dodgerblue"
             self.done = True
+        if self.start_button.rect.collidepoint(pg.mouse.get_pos()):
+            self.start_button.on_hover()
 
     def draw(self, surface):
         surface.fill(pg.Color("black"))
         self.start_button.display(surface)
+        self.multiplayer_button.display(surface)
 
 
 class Gameplay(GameState):
@@ -147,43 +151,36 @@ class Gameplay(GameState):
         super(Gameplay, self).__init__()
         self.rect = pg.Rect((0, 0), (128, 128))
         self.x_velocity = 1
+        self.bright_green = pg.Color("GreenYellow")
+        self.dark_green = pg.Color("LawnGreen")
 
     def startup(self, persistent):
         self.persist = persistent
-        color = self.persist["screen_color"]
-        self.screen_color = pg.Color(color)
-        if color == "dodgerblue":
-            text = "You clicked the mouse to get here"
-        elif color == "gold":
-            text = "You pressed a key to get here"
-        self.title = self.font.render(text, True, pg.Color("gray10"))
-        self.title_rect = self.title.get_rect(center=self.screen_rect.center)
 
     def get_event(self, event):
         if event.type == pg.QUIT:
             self.quit = True
-        elif event.type == pg.MOUSEBUTTONUP:
-            self.title_rect.center = event.pos
 
     def update(self, dt):
-        self.rect.move_ip(self.x_velocity, 0)
-        if (self.rect.right > self.screen_rect.right
-                or self.rect.left < self.screen_rect.left):
-            self.x_velocity *= -1
-            self.rect.clamp_ip(self.screen_rect)
+        pass
 
     def draw(self, surface):
-        surface.fill(self.screen_color)
-        surface.blit(self.title, self.title_rect)
-        pg.draw.rect(surface, pg.Color("darkgreen"), self.rect)
+        surface.fill(self.bright_green)
+        tile_width = self.screen_rect.x // 10
+        tile_height = self.screen_rect.x // 10
+
+        for i in range(self.screen_rect.x // 10):
+            for j in range(self.screen_rect.x // 10):
+                if (j+i) % 2 == 0:
+                    pg.draw.rect(surface, self.bright_green, [i*tile_height, j*tile_width, 2, 2])
+        pg.display.update()
 
 
 if __name__ == "__main__":
     pg.init()
-    screen = pg.display.set_mode((1280, 720))
-    states = {"SPLASH": SplashScreen(),
-              "GAMEPLAY": Gameplay()}
-    game = Game(screen, states, "SPLASH")
+    screen = pg.display.set_mode((720, 720))
+    states = {"GAMEPLAY": Gameplay()}
+    game = Game(screen, states, "GAMEPLAY")
     game.run()
     pg.quit()
     sys.exit()
