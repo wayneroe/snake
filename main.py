@@ -3,6 +3,7 @@
 import sys
 import pygame as pg
 from Buttons import PushButton
+from snake import Snake
 
 
 class Game(object):
@@ -151,8 +152,10 @@ class Gameplay(GameState):
         super(Gameplay, self).__init__()
         self.rect = pg.Rect((0, 0), (128, 128))
         self.x_velocity = 1
+        self.board_size = 10
         self.bright_green = pg.Color("GreenYellow")
         self.dark_green = pg.Color("LawnGreen")
+        self.snake = Snake(720, 720)
 
     def startup(self, persistent):
         self.persist = persistent
@@ -162,18 +165,19 @@ class Gameplay(GameState):
             self.quit = True
 
     def update(self, dt):
-        pass
+        self.snake.update(dt)
 
     def draw(self, surface):
-        surface.fill(self.bright_green)
-        tile_width = self.screen_rect.x // 10
-        tile_height = self.screen_rect.x // 10
+        tile_width = 720 // 10
 
-        for i in range(self.screen_rect.x // 10):
-            for j in range(self.screen_rect.x // 10):
+        for i in range(self.board_size):
+            for j in range(self.board_size):
                 if (j+i) % 2 == 0:
-                    pg.draw.rect(surface, self.bright_green, [i*tile_height, j*tile_width, 2, 2])
-        pg.display.update()
+                    pg.draw.rect(surface, self.bright_green, [i*tile_width, j*tile_width, tile_width, tile_width])
+                else:
+                    pg.draw.rect(surface, self.dark_green, [i * tile_width, j * tile_width, tile_width, tile_width])
+        self.snake.draw(surface)
+        pg.display.flip()
 
 
 if __name__ == "__main__":
