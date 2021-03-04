@@ -150,8 +150,6 @@ class SplashScreen(GameState):
 class Gameplay(GameState):
     def __init__(self):
         super(Gameplay, self).__init__()
-        self.rect = pg.Rect((0, 0), (128, 128))
-        self.x_velocity = 1
         self.board_size = 10
         self.bright_green = pg.Color("GreenYellow")
         self.dark_green = pg.Color("LawnGreen")
@@ -168,16 +166,18 @@ class Gameplay(GameState):
         self.snake.update(dt)
 
     def draw(self, surface):
-        tile_width = 720 // 10
-
-        for i in range(self.board_size):
-            for j in range(self.board_size):
-                if (j+i) % 2 == 0:
-                    pg.draw.rect(surface, self.bright_green, [i*tile_width, j*tile_width, tile_width, tile_width])
-                else:
-                    pg.draw.rect(surface, self.dark_green, [i * tile_width, j * tile_width, tile_width, tile_width])
+        tile_size = self.screen_rect.width // 10
+        self.draw_tiles(surface, tile_size)
         self.snake.draw(surface)
         pg.display.flip()
+    
+    def draw_tiles(self, surface, tile_size):
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                if (j + i) % 2 == 0:
+                    pg.draw.rect(surface, self.bright_green, [i * tile_size, j * tile_size, tile_size, tile_size])
+                else:
+                    pg.draw.rect(surface, self.dark_green, [i * tile_size, j * tile_size, tile_size, tile_size])
 
 
 if __name__ == "__main__":
