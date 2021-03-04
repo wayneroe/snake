@@ -1,9 +1,4 @@
-# This code is licensed as CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/legalcode).
-
-import sys
 import pygame as pg
-from Buttons import PushButton
-from snake import Snake
 
 
 class Game(object):
@@ -118,74 +113,3 @@ class GameState(object):
         Draw everything to the screen.
         """
         pass
-
-
-class SplashScreen(GameState):
-    def __init__(self):
-        super(SplashScreen, self).__init__()
-        self.persist["screen_color"] = "black"
-        self.next_state = "GAMEPLAY"
-
-        self.start_button = PushButton("Start Game", self.screen_rect.centerx, 30)
-        self.multiplayer_button = PushButton("Multiplayer", self.screen_rect.centerx, 120)
-
-    def get_event(self, event):
-        if event.type == pg.QUIT:
-            self.quit = True
-        elif event.type == pg.KEYUP:
-            self.persist["screen_color"] = "gold"
-            self.done = True
-        elif event.type == pg.MOUSEBUTTONUP:
-            self.persist["screen_color"] = "dodgerblue"
-            self.done = True
-        if self.start_button.rect.collidepoint(pg.mouse.get_pos()):
-            self.start_button.on_hover()
-
-    def draw(self, surface):
-        surface.fill(pg.Color("black"))
-        self.start_button.display(surface)
-        self.multiplayer_button.display(surface)
-
-
-class Gameplay(GameState):
-    def __init__(self):
-        super(Gameplay, self).__init__()
-        self.board_size = 10
-        self.bright_green = pg.Color("GreenYellow")
-        self.dark_green = pg.Color("LawnGreen")
-        self.snake = Snake(720, 720)
-
-    def startup(self, persistent):
-        self.persist = persistent
-
-    def get_event(self, event):
-        if event.type == pg.QUIT:
-            self.quit = True
-
-    def update(self, dt):
-        self.snake.update(dt)
-
-    def draw(self, surface):
-        self.draw_tiles(surface)
-        self.snake.draw(surface)
-        pg.display.flip()
-    
-    def draw_tiles(self, surface):
-        tile_size = self.screen_rect.width // 10
-
-        for i in range(self.board_size):
-            for j in range(self.board_size):
-                if (j + i) % 2 == 0:
-                    pg.draw.rect(surface, self.bright_green, [i * tile_size, j * tile_size, tile_size, tile_size])
-                else:
-                    pg.draw.rect(surface, self.dark_green, [i * tile_size, j * tile_size, tile_size, tile_size])
-
-
-if __name__ == "__main__":
-    pg.init()
-    screen = pg.display.set_mode((720, 720))
-    states = {"GAMEPLAY": Gameplay()}
-    game = Game(screen, states, "GAMEPLAY")
-    game.run()
-    pg.quit()
-    sys.exit()

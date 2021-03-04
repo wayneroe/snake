@@ -1,5 +1,4 @@
 import pygame as pg
-from collections import deque
 
 
 class Snake(object):
