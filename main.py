@@ -166,12 +166,13 @@ class Gameplay(GameState):
         self.snake.update(dt)
 
     def draw(self, surface):
-        tile_size = self.screen_rect.width // 10
-        self.draw_tiles(surface, tile_size)
+        self.draw_tiles(surface)
         self.snake.draw(surface)
         pg.display.flip()
     
-    def draw_tiles(self, surface, tile_size):
+    def draw_tiles(self, surface):
+        tile_size = self.screen_rect.width // 10
+
         for i in range(self.board_size):
             for j in range(self.board_size):
                 if (j + i) % 2 == 0:
