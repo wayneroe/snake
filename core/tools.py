@@ -1,3 +1,5 @@
+from enum import Enum
+
 import pygame as pg
 
 
@@ -113,3 +115,36 @@ class GameState(object):
         Draw everything to the screen.
         """
         pass
+
+
+class Point(object):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def walk(self, direction):
+        return Point(self.x + direction.value[0], self.y + direction.value[1])
+
+    def in_range(self, size):
+        if 0 <= self.x < size:
+            if 0 <= self.y < size:
+                return True
+
+    def __eq__(self, other):
+        if (self.x == other.x) and (self.y == other.y):
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        return f'x = {self.x}, y = {self.y}'
+
+    def __repr__(self):
+        return self.__str__()
+
+
+class Directions(Enum):
+    UP = (0, -1)
+    DOWN = (0, 1)
+    RIGHT = (1, 0)
+    LEFT = (-1, 0)
