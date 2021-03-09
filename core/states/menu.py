@@ -1,7 +1,7 @@
 import pygame as pg
 
-from ..tools import GameState
-from ..buttons import PushButton
+from core.buttons import PushButton
+from core.tools import GameState
 
 
 class Menu(GameState):
