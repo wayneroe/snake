@@ -7,7 +7,6 @@ from core.tools import GameState
 class GameOver(GameState):
     def __init__(self):
         super(GameOver, self).__init__()
-        self.persist["screen_color"] = "black"
 
         self.font = pg.font.SysFont('Arial', 100)
         self.text = self.font.render("GAME OVER", True, pg.Color("red"))

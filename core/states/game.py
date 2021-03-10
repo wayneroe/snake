@@ -22,8 +22,8 @@ class Game(GameState):
         super(Game, self).__init__()
         self.board_size = 10
 
-        self.tiles = Tiles(20)
-        snake_speed = 0.01
+        self.tiles = Tiles(4)
+        snake_speed = 0.001
         self.snake = Snake(self, snake_speed, self.tiles)
         self.apple = Apple(self.tiles, self.snake)
 
@@ -41,22 +41,17 @@ class Game(GameState):
     def on_key_down(self, event):
         if event.key in key_to_direction:
             direction = key_to_direction[event.key]
-            # make sure snake can't go into direction it came from
-            if self.snake.direction_allowed(direction):
-                self.snake.direction = direction
+            self.snake.change_direction(direction)
         if event.key == pg.K_ESCAPE:
             pass
             # TODO Add pausing functionality
 
     def update(self, dt):
-        if not self.snake.update(dt):
-            self.done = True
-            self.next_state = "GAME_OVER"
-            return
+        self.snake.update(dt)
         self.apple.update(dt)
 
     def draw(self, surface):
-        self.tiles.draw(surface, len(self.snake.body_coordinates))
+        self.tiles.draw(surface, self.snake.score)
         self.snake.draw(surface)
         self.apple.draw(surface)
         pg.display.flip()
