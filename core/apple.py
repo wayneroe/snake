@@ -25,7 +25,7 @@ class Apple(object):
         if self.coordinate in self.snake.body_coordinates:
             self.snake.ate_apple = True
             self.eating_sound.play()
-            self.coordinate = Point(randint(0, self.tiles.map_size - 1), randint(0, self.tiles.map_size - 1))
+            self.coordinate = self.get_point_not_in_snake()
 
     def draw(self, surface):
         pg.draw.rect(surface, pg.Color("gold"), self.tiles.get_position(self.coordinate))
