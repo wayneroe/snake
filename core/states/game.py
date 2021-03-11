@@ -22,7 +22,7 @@ class Game(GameState):
         super(Game, self).__init__()
         self.board_size = 10
 
-        self.tiles = Tiles(4)
+        self.tiles = Tiles(self.board_size)
         snake_speed = 0.001
         self.snake = Snake(self, snake_speed, self.tiles)
         self.apple = Apple(self.tiles, self.snake)
