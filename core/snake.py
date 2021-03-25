@@ -11,12 +11,13 @@ class Snake(object):
         self.tiles = tiles
         self.snake_speed = snake_speed
         self.score = 0
+        self.game_over = False
 
         middle = tiles.map_size // 2
 
         self.ate_apple = False
         sound_folder = Path("../sounds/")
-        self.eating_sound = pg.mixer.Sound(str(sound_folder / "gameOver.mp3"))
+        self.game_over_sound = pg.mixer.Sound(str(sound_folder / "gameOver.mp3"))
 
         self.body_coordinates = list([Point(middle, middle)])
 
@@ -37,16 +38,19 @@ class Snake(object):
         new_head = head.walk(self.direction)
         self.old_direction = self.direction
 
-        if not new_head.in_range(self.tiles.map_size) or new_head in self.body_coordinates:
-            self.game.done = True
-            self.game.next_state = "GAME_OVER"
-            self.eating_sound.play()
+        if not (new_head.in_range(self.tiles.map_size) or new_head in self.body_coordinates):
+            self.game_over_sound.play()
+            self.game_over = True
             return
 
         self.body_coordinates.append(new_head)
         if self.ate_apple:
             self.score += 1
             self.ate_apple = False
+            if len(self.body_coordinates) == (self.tiles.map_size ^ 2 - 1):
+                self.game.done = True
+                self.game.next_state = "VICTORY"
+                return
         else:
             self.body_coordinates.pop(0)
 

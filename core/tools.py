@@ -125,6 +125,9 @@ class Point(object):
     def walk(self, direction):
         return Point(self.x + direction.value[0], self.y + direction.value[1])
 
+    def __hash__(self):
+        return hash(repr(self))
+
     def in_range(self, size):
         if 0 <= self.x < size:
             if 0 <= self.y < size:
