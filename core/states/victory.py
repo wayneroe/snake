@@ -8,11 +8,11 @@ from core.tiles import Tiles
 from core.tools import GameState, Point
 
 
-class GameOver(GameState):
+class Victory(GameState):
     def __init__(self):
-        super(GameOver, self).__init__()
+        super(Victory, self).__init__()
         sound_folder = Path("../sounds/")
-        self.game_over_sound = pg.mixer.Sound(str(sound_folder / "gameOver.mp3"))
+        self.victory_sound = pg.mixer.Sound(str(sound_folder / "smb_stage_clear.wav"))
 
         self.board_size = 26
         self.snake_speed = 0.01
@@ -60,7 +60,7 @@ class GameOver(GameState):
 
     def startup(self, persistent):
         self.persist = persistent
-        self.game_over_sound.play()
+        self.victory_sound.play()
 
     def get_event(self, event):
         if event.type == pg.QUIT:

@@ -1,12 +1,10 @@
-import math
-
 import pygame as pg
 
 from core.multiplayer_apple import Apple
-from core.tools import Point
 from core.snake import Snake
 from core.tiles import Tiles
 from core.tools import GameState, Directions
+from core.tools import Point
 
 snake1_key_to_direction = {
     pg.K_RIGHT: Directions.RIGHT,
@@ -23,29 +21,24 @@ snake2_key_to_direction = {
 }
 
 
-class Multiplayer(GameState):
+class MultiPlayer(GameState):
     def __init__(self):
-        super(Multiplayer, self).__init__()
-        self.board_size = 10
+        super(MultiPlayer, self).__init__()
+        print("started Multiplayer")
 
-        self.tiles = Tiles(20)
+        self.board_size = 26
+
+        self.tiles = Tiles(self.board_size)
         snake_speed = 0.001
         self.snake1 = Snake(self, snake_speed, self.tiles)
         self.snake2 = Snake(self, snake_speed, self.tiles)
         self.snake2.direction = Directions.LEFT
         self.snake2.old_direction = Directions.LEFT
+        self.snake2.head_color = pg.Color("violet")
 
-        if self.board_size % 2:
-            middle = self.board_size // 2
-            self.snake1.body_coordinates = list([Point(middle, middle)])
-            self.snake2.body_coordinates = list([Point(middle + 1, middle + 1)])
-        else:
-            middle = self.board_size / 2
-            lower = math.floor(middle)
-            upper = math.ceil(middle)
-
-            self.snake1.body_coordinates = list([Point(lower, lower)])
-            self.snake2.body_coordinates = list([Point(upper, upper)])
+        middle = self.board_size // 2
+        self.snake1.body_coordinates = list([Point(middle, middle)])
+        self.snake2.body_coordinates = list([Point(middle + 2, middle + 2)])
 
         self.apple = Apple(self.tiles, [self.snake1, self.snake2])
 
@@ -76,42 +69,31 @@ class Multiplayer(GameState):
         self.snake2.update(dt)
         self.apple.update(dt)
 
-        self.check_collisions(self.snake1, self.snake2)
+        if self.snake1.body_coordinates[0] in self.snake2.body_coordinates:
+            self.snake1.game_over = True
+
+        if self.snake2.body_coordinates[0] in self.snake1.body_coordinates:
+            self.snake2.game_over = True
 
         if self.snake1.game_over and self.snake2.game_over:
-            print("Draw")
-            self.next_state = "PLAYER_VICTORY"
+            self.next_state = "VICTORY"
             self.persist["winner"] = "DRAW!"
+            print("draw")
             self.done = True
 
         if self.snake1.game_over:
-            self.next_state = "PLAYER_VICTORY"
-            self.persist["winner"] = "PLAYER 2"
+            self.next_state = "VICTORY"
+            self.persist["winner"] = "PLAYER 2 WINS!"
             self.done = True
 
         if self.snake2.game_over:
-            self.next_state = "PLAYER_VICTORY"
-            self.persist["winner"] = "PLAYER 1"
+            self.next_state = "VICTORY"
+            self.persist["winner"] = "PLAYER 1 WINS!"
             self.done = True
 
     def draw(self, surface):
-        self.tiles.draw(surface, self.snake1.score)
+        self.tiles.draw(surface)
         self.snake1.draw(surface)
         self.snake2.draw(surface)
         self.apple.draw(surface)
         pg.display.flip()
-
-
-    def check_collisions(self, snake1, snake2):
-        if snake1.body_coordinates[-1] == snake2.body_coordinates[-1]:
-            # Draw
-            snake1.game_over = True
-            snake2.game_over = True
-            return
-        if snake1.body_coordinates[-1] in snake2.body_coordinates[:-1]:
-            snake1.game_over = True
-
-        if snake2.body_coordinates[-1] in snake1.body_coordinates[:-1]:
-            snake2.game_over = True
-
-

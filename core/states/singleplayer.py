@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pygame as pg
 
 from core.apple import Apple
@@ -17,15 +19,18 @@ key_to_direction = {
 }
 
 
-class Game(GameState):
+class SinglePlayer(GameState):
     def __init__(self):
-        super(Game, self).__init__()
-        self.board_size = 10
+        super(SinglePlayer, self).__init__()
+        self.board_size = 26
 
         self.tiles = Tiles(self.board_size)
-        snake_speed = 0.001
+        snake_speed = 0.01
         self.snake = Snake(self, snake_speed, self.tiles)
         self.apple = Apple(self.tiles, self.snake)
+
+        sound_folder = Path("../sounds/")
+        self.game_over_sound = pg.mixer.Sound(str(sound_folder / "gameOver.mp3"))
 
     def startup(self, persistent):
         self.persist = persistent
@@ -48,10 +53,17 @@ class Game(GameState):
 
     def update(self, dt):
         self.snake.update(dt)
+
+        if self.snake.game_over:
+            self.game_over_sound.play()
+            self.done = True
+            self.next_state = "GAME_OVER"
+            return
+
         self.apple.update(dt)
 
     def draw(self, surface):
-        self.tiles.draw(surface, self.snake.score)
+        self.tiles.draw(surface)
         self.snake.draw(surface)
         self.apple.draw(surface)
         pg.display.flip()

@@ -1,12 +1,11 @@
 from pathlib import Path
-from random import randint, choice
+from random import choice
 from typing import List
-import numpy as np
 
 import pygame as pg
 
-from core.tools import Point
 from core.snake import Snake
+from core.tools import Point
 
 
 class Apple(object):
@@ -19,7 +18,7 @@ class Apple(object):
         self.eating_sound = pg.mixer.Sound(str(sound_folder / "eat.ogg"))
 
     def get_point_not_in_snake(self):
-        all_points = list([Point(i, j) for i in range(self.tiles.map_size - 1) for j in range(self.tiles.map_size - 1)])
+        all_points = list([Point(i, j) for i in range(self.tiles.size - 1) for j in range(self.tiles.size - 1)])
 
         snake_coordinates = set()
         for snake in self.snakes:
@@ -38,4 +37,4 @@ class Apple(object):
                 self.coordinate = self.get_point_not_in_snake()
 
     def draw(self, surface):
-        pg.draw.rect(surface, pg.Color("gold"), self.tiles.get_position(self.coordinate))
+        pg.draw.rect(surface, pg.Color("gold"), self.tiles.get_rectangle(self.coordinate))

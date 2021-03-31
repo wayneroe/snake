@@ -4,7 +4,7 @@ from pathlib import Path
 import pygame as pg
 
 from core import tools
-from core.states import game, splash, menu, over, multiplayer
+from core.states import singleplayer, splash, menu, over, multiplayer, victory
 
 if __name__ == "__main__":
     pg.init()
@@ -15,13 +15,15 @@ if __name__ == "__main__":
     icon = pg.image.load(icon_path)
     pg.display.set_icon(icon)
     pg.display.set_caption("Snake")
-    states = {"GAME": game.Game(),
-              "MULTIPLAYER": multiplayer.Multiplayer(),
+    states = {"SINGLEPLAYER": singleplayer.SinglePlayer(),
+              "MULTIPLAYER": multiplayer.MultiPlayer(),
               "SPLASH": splash.Splash(),
               "MENU": menu.Menu(),
-              "GAME_OVER": over.GameOver()
+              "GAME_OVER": over.GameOver(),
+              "VICTORY": victory.Victory()
               }
-    game = tools.Game(screen, states, "MULTIPLAYER")
+
+    game = tools.Game(screen, states, "MENU")
     game.run()
     pg.quit()
     sys.exit()
